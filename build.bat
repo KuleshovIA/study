@@ -27,6 +27,7 @@ set arr[2].file=run_refactoring_and_print.bat
 set arr[3].file=run_base_theory_p1.bat
 set arr[4].file=run_base_theory_tasks_p1.bat
 set arr[5].file=run_obuchaika.bat
+set arr[6].file=run_my_sobaka.bat
 
 set arr[0].folder=bubble_sort
 set arr[1].folder=bubble_sort_mf
@@ -34,6 +35,7 @@ set arr[2].folder=refactoring_and_print
 set arr[3].folder=base_theory_p1
 set arr[4].folder=base_theory_tasks_p1
 set arr[5].folder=obuchaika
+set arr[6].folder=my_sobaka
 
 for /L %%i in (0,1,5) do ( 
 	copy ..\%SOURCE_FOLDER%\!arr[%%i].folder!\!arr[%%i].file! .\!arr[%%i].folder!
