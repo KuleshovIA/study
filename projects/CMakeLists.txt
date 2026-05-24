@@ -7,5 +7,6 @@ add_subdirectory(bubble_sort_mf)
 add_subdirectory(refactoring_and_print)
 add_subdirectory(base_theory_p1)
 add_subdirectory(base_theory_tasks_p1)
+add_subdirectory(obuchaika)
 
 set(CMAKE_SUPPRESS_REGENERATION true)
