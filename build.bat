@@ -43,4 +43,3 @@ for /L %%i in (0,1,5) do (
 
 copy ..\run_tests.bat .
 
-pause
