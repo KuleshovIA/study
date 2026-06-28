@@ -12,6 +12,7 @@ namespace biv {
 		public:
 			LongNumber();
 			LongNumber(int length, int sign);
+			LongNumber(int length, int number_length, int* numbers, int sign);
 			LongNumber(const char* const str);
 			LongNumber(const LongNumber& x);
 			LongNumber(LongNumber&& x);
@@ -45,5 +46,8 @@ namespace biv {
 			static LongNumber mul_abs (const LongNumber &a, const LongNumber &b);
 			static void div_abs (const LongNumber &a, const LongNumber &b, LongNumber& quotient, LongNumber& remainder);
 			static int comp_abs (const LongNumber &a, const LongNumber &b);
+			
+			bool is_abs_bigger(const LongNumber &x) const;
+			bool is_abs_equal(const LongNumber &x) const;
 	};
 }

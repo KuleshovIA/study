@@ -1,5 +1,6 @@
 #include "long_number.hpp"
 #include <cstring>
+#include <iostream>
 
 using biv::LongNumber;
 		
@@ -7,7 +8,6 @@ LongNumber::LongNumber() : length(1), sign(1) {
 	numbers = new int[length];
 	numbers[0] = 0;
 }
-
 
 LongNumber::LongNumber(int length, int sign) {
 	this->sign = sign;
@@ -18,6 +18,20 @@ LongNumber::LongNumber(int length, int sign) {
 	}
 }
 
+/*
+	length >= number_length
+*/
+LongNumber::LongNumber(int length, int number_length, int* numbers, int sign) {
+	this->length = length;
+	this->sign = sign;
+	this->numbers = new int[length];
+	for (int i = 0; i < number_length; i++) {
+		this->numbers[i] = numbers[i];
+	}
+	for (int i = number_length; i < length; i++) {
+		this->numbers[i] = 0;
+	}
+}
 
 LongNumber::LongNumber(const char* const str) {
 	int str_length = std::strlen(str);
@@ -129,26 +143,7 @@ bool LongNumber::operator > (const LongNumber& x) const {
 	} else if (sign < x.sign) {
 		return false;
 	} else {
-		bool is_max_abs = true;
-		if (length != x.length) {
-			if (length < x.length) {
-				is_max_abs = false;
-			}
-		} else {
-			int i = length - 1;
-			while (i >= 0) {
-				if (numbers[i] != x.numbers[i]) {
-					if (numbers[i] < x.numbers[i]) {
-						is_max_abs = false;
-					}
-					break;
-				}
-				i--;
-			}
-			if (i < 0) {
-				is_max_abs = false;
-			}
-		}
+		bool is_max_abs = is_abs_bigger(x);
 		if (sign == -1) {
 			return !is_max_abs;
 		} else {
@@ -163,54 +158,49 @@ bool LongNumber::operator < (const LongNumber& x) const {
 
 LongNumber LongNumber::operator + (const LongNumber& x) const { 
 	if (sign == x.sign) {
-		int max_length = (length > x.length) ? length : x.length;
-		LongNumber result(max_length + 1, 1);
+		LongNumber result;
 		
-		int c = 0;
-		for (int i = 0; i < max_length; i++) {
-			int sum = c;
-			if (i < length) sum += numbers[i];
-			if (i < x.length) sum += numbers [i];
-			result.numbers[i] = sum % 10;
-			c = sum / 10;
-		}
-		if (c > 0) {
-			result.numbers[max_length] = c;
-			
+		LongNumber min;
+		if (length > x.length) {
+			result = LongNumber(length + 1, length, numbers, sign);
+			min = x;
 		} else {
-			result.length--;
+			result = LongNumber(x.length + 1, x.length, x.numbers, x.sign);
+			min = *this;
 		}
+
+		for (int i = 0; i < min.length; i++) {
+			result.numbers[i] += min.numbers[i];
+			result.numbers[i + 1] += result.numbers[i] / 10;
+			result.numbers[i] %= 10;
+		}
+		for (int i = min.length; i < result.length - 1; i++) {
+			result.numbers[i + 1] += result.numbers[i] / 10;
+			result.numbers[i] %= 10;
+		}
+		
 		while (result.length > 1 && result.numbers[result.length - 1] == 0) {
 			result.length--;
 		}
 		return result;
-	} else {		
-		LongNumber max = *this;
-		LongNumber min = x;
-		if (max.sign > min.sign) {
-			min.sign = 1;
-		} else {
-			max.sign = 1;
-		}
 		
-		LongNumber result(max.length, 1);
-		if (min > max) {
-			LongNumber temp = max;
-			max = min;
-			min = temp;
-			if (sign > 0) {
-				result.sign = -1;
-			}
-		} else if (sign < 0) {
+	} else {		
+		LongNumber result;
+		LongNumber min;
+		
+		if (is_abs_bigger(x) || is_abs_equal(x)) {
+			result = *this; 
+			min = x;
+		} else {
+			result = x;
+			min = *this;
 			result.sign = -1;
 		}
-		
-		for (int i = 0; i < max.length; i++) {
-			if (i < min.length) {
-				result.numbers[i] = max.numbers[i] - min.numbers[i];
-			}
+				
+		for (int i = 0; i < min.length; i++) {
+			result.numbers[i] -= min.numbers[i];
 		}
-		for (int i = 0; i < max.length - 1; i++) {
+		for (int i = 0; i < result.length - 1; i++) {
 			if (result.numbers[i] < 0) {
 				result.numbers[i] += 10;
 				result.numbers[i + 1] -= 1;
@@ -284,6 +274,7 @@ int LongNumber::get_length(const char* const str) const noexcept {
 	// TODO
 }
 */
+
 
 LongNumber LongNumber::add_abs (const LongNumber& a, const LongNumber& b) {
 	int max_len;
@@ -436,7 +427,33 @@ int LongNumber::comp_abs (const LongNumber& a, const LongNumber& b) {
 	return 0;
 }
 
+bool LongNumber::is_abs_bigger(const LongNumber &x) const {
+	bool is_max_abs = true;
+	if (length != x.length) {
+		if (length < x.length) {
+			is_max_abs = false;
+		}
+	} else {
+		int i = length - 1;
+		while (i >= 0) {
+			if (numbers[i] != x.numbers[i]) {
+				if (numbers[i] < x.numbers[i]) {
+					is_max_abs = false;
+				}
+				break;
+			}
+			i--;
+		}
+		if (i < 0) {
+			is_max_abs = false;
+		}
+	}
+	return is_max_abs;
+}
 
+bool LongNumber::is_abs_equal(const LongNumber &x) const {
+	return comp_abs(*this, x) == 0 ? true : false;
+}
 // ----------------------------------------------------------
 // FRIENDLY
 // ----------------------------------------------------------
