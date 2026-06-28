@@ -10,11 +10,11 @@ LongNumber::LongNumber() : length(1), sign(1) {
 
 
 LongNumber::LongNumber(int length, int sign) {
-	LongNumber::sign = sign;
-	LongNumber::length = length;
-	LongNumber::numbers = new int[length];
+	this->sign = sign;
+	this->length = length;
+	numbers = new int[length];
 	for (int i = 0; i < length; i++) {
-		LongNumber::numbers[i] = 0;
+		numbers[i] = 0;
 	}
 }
 
@@ -32,10 +32,6 @@ LongNumber::LongNumber(const char* const str) {
 	numbers = new int[length];
 	for (int i = 0; i < length; i++) {
 		numbers[i] = str[str_length - i - 1] - '0';
-	}
-	
-	while (length > 1 && numbers[length - 1] == 0) {
-		length--;
 	}
 }
 
