@@ -163,46 +163,72 @@ bool LongNumber::operator < (const LongNumber& x) const {
 
 LongNumber LongNumber::operator + (const LongNumber& x) const { 
 	if (sign == x.sign) {
-		LongNumber result = add_abs(*this, x);
-		result.sign = sign;
-		return result;
-	} else {
-		int is_bigger = comp_abs(*this, x);
-		if (is_bigger == 0) {
-			return LongNumber();
+		int max_length = (length > x.length) ? length : x.length;
+		LongNumber result(max_length + 1, 1);
+		
+		int c = 0;
+		for (int i = 0; i < max_length; i++) {
+			int sum = c;
+			if (i < length) sum += numbers[i];
+			if (i < x.length) sum += numbers [i];
+			result.numbers[i] = sum % 10;
+			c = sum / 10;
 		}
-		if (is_bigger > 0) {
-			LongNumber result = sub_abs(*this, x);
-			result.sign = sign;
-			return result;
+		if (c > 0) {
+			result.numbers[max_length] = c;
+			
 		} else {
-			LongNumber result = sub_abs(x, *this);
-			result.sign = x.sign;
-			return result;
+			result.length--;
 		}
+		while (result.length > 1 && result.numbers[result.length - 1] == 0) {
+			result.length--;
+		}
+		return result;
+	} else {		
+		LongNumber max = *this;
+		LongNumber min = x;
+		if (max.sign > min.sign) {
+			min.sign = 1;
+		} else {
+			max.sign = 1;
+		}
+		
+		LongNumber result(max.length, 1);
+		if (min > max) {
+			LongNumber temp = max;
+			max = min;
+			min = temp;
+			if (sign > 0) {
+				result.sign = -1;
+			}
+		} else if (sign < 0) {
+			result.sign = -1;
+		}
+		
+		for (int i = 0; i < max.length; i++) {
+			if (i < min.length) {
+				result.numbers[i] = max.numbers[i] - min.numbers[i];
+			}
+		}
+		for (int i = 0; i < max.length - 1; i++) {
+			if (result.numbers[i] < 0) {
+				result.numbers[i] += 10;
+				result.numbers[i + 1] -= 1;
+			}
+		}
+		
+		while (result.length > 1 && result.numbers[length - 1] == 0) {
+			result.length--;
+		}
+		return result;
 	}
+	
 }
 
 LongNumber LongNumber::operator - (const LongNumber& x) const {
-	if (sign != x.sign) {
-		LongNumber result = add_abs(*this, x);
-		result.sign = sign;
-		return result;
-	} else {
-		int is_bigger = comp_abs(*this, x);
-		if (is_bigger == 0) {
-			return LongNumber();
-		}
-		if (is_bigger > 0) {
-			LongNumber result = sub_abs(*this, x);
-			result.sign = sign;
-			return result;
-		} else {
-			LongNumber result = sub_abs(x, *this);
-			result.sign = -sign;
-			return result;
-		}
-	}
+	LongNumber temp = x;
+	temp.sign = -x.sign;
+	return *this + temp;
 }
 
 LongNumber LongNumber::operator * (const LongNumber& x) const {
