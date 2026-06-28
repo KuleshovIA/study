@@ -105,25 +105,22 @@ LongNumber& LongNumber::operator = (LongNumber&& x) {
 bool LongNumber::operator == (const LongNumber& x) const {
 	if (sign != x.sign) {
 		return false;
-	} else {
-		if (comp_abs(*this, x) == 0) {
-			return true;
-		} else {
-			return false;
+	}
+	if (length != x.length) {
+		return false;
+	}
+	if (sign == x.sign && length == x.length) {
+		for (int i = 0; i < length; i++) {
+			if (numbers[i] != x.numbers[i]) {
+				return false;
+			}
 		}
 	}
+	return true;
 }
 
 bool LongNumber::operator != (const LongNumber& x) const {
-	if (sign != x.sign) {
-		return true;
-	} else {
-		if (comp_abs(*this, x) != 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+	return !(*this == x);
 }
 
 bool LongNumber::operator > (const LongNumber& x) const {
@@ -132,42 +129,36 @@ bool LongNumber::operator > (const LongNumber& x) const {
 	} else if (sign < x.sign) {
 		return false;
 	} else {
-		if (sign == 1) {
-			if (comp_abs(*this, x) == 1) {
-				return true;
-			} else {
-				return false;
+		bool is_max_abs = true;
+		if (length != x.length) {
+			if (length < x.length) {
+				is_max_abs = false;
 			}
 		} else {
-			if (comp_abs(*this, x) == -1) {
-				return true;
-			} else {
-				return false;
+			int i = length - 1;
+			while (i >= 0) {
+				if (numbers[i] != x.numbers[i]) {
+					if (numbers[i] < x.numbers[i]) {
+						is_max_abs = false;
+					}
+					break;
+				}
+				i--;
 			}
+			if (i < 0) {
+				is_max_abs = false;
+			}
+		}
+		if (sign == -1) {
+			return !is_max_abs;
+		} else {
+			return is_max_abs;
 		}
 	}
 }
 
 bool LongNumber::operator < (const LongNumber& x) const {
-	if (sign < x.sign) {
-		return true;
-	} else if (sign > x.sign) {
-		return false;
-	} else {
-		if (sign == 1) {
-			if (comp_abs(*this, x) == -1) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			if (comp_abs(*this, x) == 1) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
+	return !(*this > x || *this == x);
 }
 
 LongNumber LongNumber::operator + (const LongNumber& x) const { 
