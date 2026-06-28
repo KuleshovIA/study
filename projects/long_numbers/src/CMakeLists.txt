@@ -1,12 +1,10 @@
-project(long_number)
-
-set(HEADERS
-	long_number.hpp
+target_sources(${MY_SORT_LIB}
+	PRIVATE
+		long_number.cpp
+	PUBLIC
+		long_number.hpp
 )
 
-set(SOURCES 
-	main.cpp
-	long_number.cpp
+target_include_directories(${MY_SORT_LIB} PUBLIC
+	"${CURRENT_SOURCE_DIR}"
 )
-
-add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES})
